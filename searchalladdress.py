@@ -6,7 +6,7 @@ from pymodbus.client import ModbusSerialClient
 # Define parameters
 baudrates = [2400] #, 4800, 9600, 14400, 19200, 38400, 57600, 115200]
 parities = ['E'] #, 'O', 'N']
-slave_ids = range(0, 255)
+slave_ids = range(143, 255)
 addresses = [
     0x00, 0x01, 0x02, 0x03, 0x04,
     0x10, 0x11, 0x12, 0x13,
