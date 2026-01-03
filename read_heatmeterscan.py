@@ -312,7 +312,7 @@ def scan_and_read(args):
 
 def main():
     ap = argparse.ArgumentParser(description="Auto-scan XHT Heat Meter (RS-485 on /dev/ttyAMA3)")
-    ap.add_argument("--port", default="/dev/ttyAMA3,/dev/ttyAMA2")
+    ap.add_argument("--port", default="/dev/ttyAMA2")
     ap.add_argument("--bauds", default="2400,9600", help="Comma-separated baud list to try")
     ap.add_argument("--parity", default="E", choices=["N", "E", "O"], help="Serial parity (default E)")
     ap.add_argument("--stopbits", type=int, default=1)
