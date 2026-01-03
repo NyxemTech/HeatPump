@@ -46,7 +46,7 @@ with open('find.csv', mode='w', newline='') as file:
                 print(f"  Trying baudrate {baudrate}, parity {parity}, slave {slave_id}")
 
                 client = ModbusSerialClient(
-                    port='/dev/ttySC0',
+                    port='/dev/ttyAMA2',
                     baudrate=baudrate,
                     timeout=1,
                     stopbits=1,
