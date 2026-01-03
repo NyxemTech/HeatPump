@@ -7,10 +7,9 @@ XHT Heat Meter reader for RS-485 on /dev/ttyAMA3 (Modbus RTU, default 2400 8E1)
 - Auto-detects whether client calls expect `unit=` (2.x) or `slave=` (3.x).
 - Auto-detects/uses an RTU framer on 3.x; skips framer kw on 2.x.
 
-Install:
-  pip install -U "pymodbus>=3,<4" pyserial
-  # or, if you prefer 2.x:
-  pip install -U "pymodbus<3" pyserial
+Change made (per your request):
+- If the FIRST read is OK, then it will CONTINUE reading repeatedly (default every 2s).
+- If first read fails, it keeps retrying until it succeeds, then starts the repeating loop.
 """
 
 import argparse
@@ -214,7 +213,8 @@ def main():
     ap.add_argument("--bytesize", type=int, default=8)
     ap.add_argument("--timeout", type=float, default=1.5, help="Serial timeout (s)")
     ap.add_argument("--unit", type=int, default=145, help="Modbus slave/unit ID")
-    ap.add_argument("--loop", type=float, default=0.0, help="Loop period in seconds (0 = read once)")
+    ap.add_argument("--loop", type=float, default=2.0,
+                    help="Loop period in seconds. Default=2.0 (repeats after first OK).")
     ap.add_argument("--large-energy", action="store_true", help="Interpret energy as MWh (large-caliber meters)")
     ap.add_argument("--swap32", action="store_true", help="Swap 32-bit word order if your values look wrong")
     args = ap.parse_args()
@@ -244,25 +244,44 @@ def main():
     print(f"Calling client with '{UNIT_KW}=' keyword.")
 
     if not client.connect():
-        raise SystemExit(f"Failed to open {args.port} (baud {args.baud}, {args.bytesize}{args.parity}{args.stopbits})")
+        raise SystemExit(
+            f"Failed to open {args.port} (baud {args.baud}, {args.bytesize}{args.parity}{args.stopbits})"
+        )
+
+    started = False  # becomes True after FIRST successful read
 
     try:
-        def one_read():
+        def one_read() -> bool:
+            """
+            Returns True if read_all() succeeded, else False.
+            """
             try:
                 data = read_all(client, args.unit, large_energy=args.large_energy, swap32=args.swap32)
                 ts = time.strftime("%Y-%m-%d %H:%M:%S")
                 print(f"\n[{ts}] XHT Heat Meter ({UNIT_KW} {args.unit})")
                 for k, v in data.items():
                     print(f"  {k}: {v}")
+                return True
             except Exception as e:
                 print(f"Read error: {e}")
+                return False
 
-        if args.loop and args.loop > 0:
-            while True:
-                one_read()
-                time.sleep(args.loop)
-        else:
-            one_read()
+        # NEW behavior:
+        # - Keep trying until first OK
+        # - After first OK, repeat every args.loop seconds (default 2.0)
+        while True:
+            ok = one_read()
+            if ok:
+                started = True
+
+            if not started:
+                # First read not OK yet -> retry faster (1s) until it works
+                time.sleep(1.0)
+                continue
+
+            # First read was OK at least once -> normal repeating period
+            time.sleep(max(0.1, float(args.loop)))
+
     finally:
         client.close()
 
