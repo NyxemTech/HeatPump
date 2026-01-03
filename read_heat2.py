@@ -11,7 +11,7 @@ class ZP_RS485_Reader(QWidget):
     def __init__(self):
         super().__init__()
         self.client = ModbusSerialClient(
-            port='/dev/ttyAMA3',
+            port='/dev/ttyAMA2',
             baudrate=2400,
             stopbits=1,
             parity='E',
