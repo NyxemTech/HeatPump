@@ -213,7 +213,7 @@ def main():
     ap.add_argument("--stopbits", type=int, default=1)
     ap.add_argument("--bytesize", type=int, default=8)
     ap.add_argument("--timeout", type=float, default=1.5, help="Serial timeout (s)")
-    ap.add_argument("--unit", type=int, default=1, help="Modbus slave/unit ID")
+    ap.add_argument("--unit", type=int, default=145, help="Modbus slave/unit ID")
     ap.add_argument("--loop", type=float, default=0.0, help="Loop period in seconds (0 = read once)")
     ap.add_argument("--large-energy", action="store_true", help="Interpret energy as MWh (large-caliber meters)")
     ap.add_argument("--swap32", action="store_true", help="Swap 32-bit word order if your values look wrong")
