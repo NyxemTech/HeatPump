@@ -12,7 +12,7 @@ from pymodbus.exceptions import ModbusIOException
 # ---------------------------
 
 class ModbusWrapper:
-    def __init__(self, port="/dev/ttySC0", slave_id=1, baudrate=9600):
+    def __init__(self, port="/dev/ttyAMA3", slave_id=1, baudrate=9600):
         self.port = port
         self.slave_id = slave_id
         self.baudrate = baudrate
