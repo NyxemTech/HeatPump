@@ -556,8 +556,8 @@ def main():
     candidate_ports = [
         "/dev/ttySC0",
         "/dev/ttySC1",
-        "/dev/ttyAMA2",
         "/dev/ttyAMA3",
+        "/dev/ttyAMA2",
     ]
 
     detected_port, modbus = autodetect_rs485_port(candidate_ports, slave_id, baudrate)
