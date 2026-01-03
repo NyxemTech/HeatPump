@@ -537,7 +537,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
 def main():
-    port = "/dev/ttySC0"   # change if needed
+    port = "/dev/ttyAMA3"   # change if needed
     slave_id = 1
     baudrate = 9600
 
